@@ -1,25 +1,26 @@
 import React, { useState, useContext, useRef } from 'react';
 import MaterialTable from 'material-table';
 import { TablePagination } from '@material-ui/core';
+import withStyles from '@material-ui/core/styles/withStyles';
 import { TodoContext } from '../context/TodosProvider';
-import ConfirmationDialog from './ConfirmationDialog';
-import FormDialog from './FormDialog';
+import ConfirmationDialog from './dialogs/ConfirmationDialog';
+import FormDialog from './dialogs/FormDialog';
+import { tableStyles } from '../styles/styles';
 
-// import withStyles from '@material-ui/core/styles/withStyles';
-// import { tableStyles } from '../styles/styles';
-
-function TodoTable() {
-    const [ selectedRow, setSelectedRow ] = useState(null);
+function TodoTable({ classes, ...props }) {
     const { todos, deleteTodo, editTodo, deleteSelectedTodos } = useContext(TodoContext);
-    const [ recordToDelete, setRecordToDelete ] = useState('');
+
+    const [ selectedRow, setSelectedRow ] = useState(null);
+    const [ recordToDeleteId, setRecordToDeleteId ] = useState('');
     const [ recordToEdit, setRecordToEdit ] = useState(null);
     const [ selectedTodos, setSelectedTodos ] = useState([]);
     const [ isOneRecord, setIsOneRecord ] = useState(true);
+
     const confirmationDialogRef = useRef(null);
     const formDialogRef = useRef(null);
 
     const onDeleteTodo = (id) => () => {
-        setRecordToDelete(id);
+        setRecordToDeleteId(id);
         setIsOneRecord(true);
         confirmationDialogRef.current.openDialog();
     }
@@ -29,7 +30,7 @@ function TodoTable() {
             return;
         }
 
-        deleteTodo(recordToDelete);
+        deleteTodo(recordToDeleteId);
     }
 
     const onEditTodo = (todo) => () => {
@@ -51,46 +52,57 @@ function TodoTable() {
         deleteSelectedTodos(selectedTodos);
     }
 
-    const renderTableOperations = (rowData) => {
+    const showTodoDetails = (id) => () => {
+        props.history.push(`/detail/${id}`);
+    };
+
+    const renderTableActions = (rowData) => {
         return (
             <>
-                <button style={{ border: 'none', background: 'none', cursor: 'pointer'}}
+                <button className={classes.button}
                     onClick={onEditTodo(rowData)}
                     title="Edit"
                 >
                     <i className="material-icons primary-color">edit</i>
                 </button>
-                <button style={{ border: 'none', background: 'none', cursor: 'pointer', marginLeft: '10px' }}
-                    onClick={onDeleteTodo(rowData.tableData.id)}
+                <button className={classes.button}
+                    onClick={onDeleteTodo(rowData.id)}
                     title="Delete"
                 >
                     <i className="material-icons primary-color">delete</i>
+                </button>
+                <button className={classes.button}
+                    onClick={showTodoDetails(rowData.id)}
+                    title="View details"
+                >
+                    <i className="material-icons primary-color">visibility</i>
                 </button>
             </>
         );
     }
 
+    const onRowClick = (event, selectedRow) => setSelectedRow(selectedRow.tableData.id);
+
     const tableColumns = [
         { title: 'Id', field: 'id', sorting: false, editable: 'never' },
         { title: 'Task Name', field: 'taskName' },
-        { title: 'Task Description', field: 'taskDescription' },
+        { title: 'Task Description', field: 'taskDescription',
+            cellStyle: {
+                width: '10px',
+                maxWidth: '10px',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+            },
+        },
         { title: 'Created At', field: 'createdAt', editable: 'never' },
-        {
-            title: 'Operations',
-            field: 'operations',
-            sorting: false,
-            editable: 'never',
-            render: renderTableOperations,
-        }
+        { title: 'Actions', field: 'actions', sorting: false, editable: 'never', render: renderTableActions }
     ];
 
     const tableOptions = {
         sorting: true,
         selection: true,
         search: true,
-        rowStyle: rowData => ({
-            backgroundColor: (selectedRow === rowData.tableData.id) ? '#EEE' : '#FFF'
-        }),
+        rowStyle: rowData => ({ backgroundColor: (selectedRow === rowData.tableData.id) ? '#EEE' : '#FFF' }),
     }
 
     const tableActions = [
@@ -113,11 +125,20 @@ function TodoTable() {
         }
     }
 
-    const onRowClick = (event, selectedRow) => setSelectedRow(selectedRow.tableData.id);
+    // const prepareTodosForTable = todos.map((todo) => {
+    //     let shortDescription = '';
 
-    const onSelectionChange = (rows) => {
-        // console.log('On select change', rows)
-    }
+    //     if (todo.taskDescription.length >= 20) {
+    //         shortDescription = todo.taskDescription.substring(0, 20) + '...';
+    //     } else {
+    //         shortDescription = todo.taskDescription;
+    //     }
+
+    //     return {
+    //         ...todo,
+    //         shortDescription,
+    //     }
+    // });
 
     return (
         <>
@@ -125,12 +146,9 @@ function TodoTable() {
                 title="Todos"
                 columns={tableColumns}
                 data={todos}
-                // icons={tableIcons}
                 options={tableOptions}
                 onRowClick={onRowClick}
-                // onSelectionChange={onSelectionChange}
                 actions={tableActions}
-                // editable={tableOperations}
                 components={tableComponents}
             />
             <ConfirmationDialog
@@ -151,4 +169,4 @@ function TodoTable() {
     );
 }
 
-export default TodoTable;
+export default withStyles(tableStyles)(TodoTable);

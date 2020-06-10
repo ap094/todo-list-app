@@ -1,19 +1,13 @@
-import {
-    AppBar,
-    CssBaseline,
-    IconButton,
-    Toolbar,
-    Typography,
- } from '@material-ui/core';
+import React, { useContext, useRef } from 'react';
+import { Button, Icon } from '@material-ui/core';
+import withStyles from '@material-ui/core/styles/withStyles';
 import { TodoContext } from '../context/TodosProvider';
 import { todoListStyles } from '../styles/styles';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
-import FormDialog from './FormDialog';
-import React, { useContext, useRef } from 'react';
+import FormDialog from './dialogs/FormDialog';
 import TodoTable from './TodoTable';
-import withStyles from '@material-ui/core/styles/withStyles';
+import Home from './Home';
 
-function TodoList({ classes }) {
+function TodoList({ classes, history }) {
     const { addTodo } = useContext(TodoContext);
     const formDialogRef = useRef(null);
 
@@ -22,37 +16,23 @@ function TodoList({ classes }) {
     }
 
     return (
-        <div className={classes.root}>
-            <CssBaseline />
-            <AppBar position="fixed" className={classes.appBar}>
-                <Toolbar>
-                    <Typography variant="h6" noWrap>
-                        Todo List App
-                    </Typography>
-                </Toolbar>
-            </AppBar>
-
-            <main className={classes.content}>
-                <div className={classes.toolbar} />
-
-                <TodoTable />
-
-                <IconButton
-                    className={classes.addIconButton}
-                    color="primary"
-                    aria-label="Add Todo"
-                    onClick={onAddButtonClick}
-                >
-                    <AddCircleIcon className={classes.addIconButtonSize} />
-                </IconButton>
-
-                <FormDialog
-                    ref={formDialogRef}
-                    actions={{ addTodo }}
-                    buttonType={'Add'}
-                />
-            </main>
-        </div>
+        <Home>
+            <Button
+                variant="contained"
+                color="primary"
+                className={classes.addIconButton}
+                startIcon={<Icon>add</Icon>}
+                onClick={onAddButtonClick}
+            >
+                Add todo
+            </Button>
+            <FormDialog
+                ref={formDialogRef}
+                actions={{ addTodo }}
+                buttonType={'Add'}
+            />
+            <TodoTable history={history} />
+        </Home>
     );
 }
 

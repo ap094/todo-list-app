@@ -1,5 +1,5 @@
-import { Button, Dialog, DialogActions, DialogContent } from '@material-ui/core';
 import React from 'react';
+import { Button, Dialog, DialogActions, DialogContent } from '@material-ui/core';
 
 export default class ConfirmationDialog extends React.Component {
     constructor(props) {
@@ -20,6 +20,10 @@ export default class ConfirmationDialog extends React.Component {
     onYesButtonClick = () => {
         this.setState({ isOpened: false });
         this.props.onConfirm(true);
+
+        if (this.props.redirect) {
+            this.props.redirect.push('/');
+        }
     }
 
     onNoButtonClick = () => {

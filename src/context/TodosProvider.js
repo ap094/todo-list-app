@@ -1,11 +1,23 @@
-import { uuid } from 'uuidv4';
 import React, { createContext, useState } from 'react';
-import todosData from '../todosDummyData';
+import { uuid } from 'uuidv4';
+import todosData from '../util/todosDummyData';
 
 export const TodoContext = createContext();
 
 const TodoContextProvider = ({ children }) => {
     const [ todos, setTodos ] = useState(todosData);
+
+    const getTodo = (id) => {
+        let todoData = {};
+
+        todos.forEach((todo) => {
+            if (todo.id === id) {
+                todoData = { ...todo };
+            }
+        });
+
+        return todoData;
+    }
 
     const addTodo = (todo) => {
         setTodos([
@@ -18,7 +30,7 @@ const TodoContextProvider = ({ children }) => {
         setTodos(todos.map((todo) => {
             if (todo.id === todoRecord.id) {
                 return {
-                    ...todoRecord
+                    ...todoRecord,
                 }
             }
 
@@ -27,21 +39,32 @@ const TodoContextProvider = ({ children }) => {
     }
 
     const deleteTodo = (id) => {
-        setTodos(todos.filter(todo => todo.tableData.id !== id));
+        setTodos(todos.filter(todo => todo.id !== id));
     }
 
     const deleteSelectedTodos = (selectedTodos) => {
         let todosCopy = [...todos];
 
         selectedTodos.forEach(st => {
-            todosCopy = todosCopy.filter(tc => tc.tableData.id !== st.tableData.id);
+            todosCopy = todosCopy.filter(tc => tc.id !== st.id);
         });
 
         setTodos(todosCopy);
     }
 
+    console.log('Todos', todos)
+
     return (
-        <TodoContext.Provider value={{ todos, addTodo, editTodo, deleteTodo, deleteSelectedTodos }}>
+        <TodoContext.Provider
+            value={{
+                todos,
+                addTodo,
+                editTodo,
+                deleteTodo,
+                deleteSelectedTodos,
+                getTodo
+            }}
+        >
             {children}
         </TodoContext.Provider>
     );

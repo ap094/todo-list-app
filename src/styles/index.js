@@ -1,11 +1,4 @@
-const todoListStyles = (theme) => ({
-    addIconButton: {
-        top: '10px',
-        marginBottom: '50px'
-    },
-});
-
-const homeStyles = (theme) => ({
+const baseComponentStyles = (theme) => ({
     root: {
         display: 'flex'
     },
@@ -25,6 +18,13 @@ const homeStyles = (theme) => ({
         padding: theme.spacing(3),
     },
 	toolbar: theme.mixins.toolbar,
+});
+
+const todoListStyles = () => ({
+    addIconButton: {
+        top: '10px',
+        marginBottom: '50px'
+    },
 });
 
 const tableStyles = () => ({
@@ -56,8 +56,8 @@ const todoDetailStyles = () => ({
 });
 
 export {
+    baseComponentStyles,
     todoListStyles,
     tableStyles,
     todoDetailStyles,
-    homeStyles
 }

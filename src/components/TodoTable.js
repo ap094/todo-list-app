@@ -2,26 +2,18 @@ import React, { useState, useContext, useRef } from 'react';
 import MaterialTable from 'material-table';
 import { TablePagination } from '@material-ui/core';
 import withStyles from '@material-ui/core/styles/withStyles';
+import { tableStyles } from '../styles';
 import { TodoContext } from '../context/TodosProvider';
 import ConfirmationDialog from './dialogs/ConfirmationDialog';
 import FormDialog from './dialogs/FormDialog';
-import { tableStyles } from '../styles/styles';
 
 function TodoTable({ classes, ...props }) {
     const { todos, deleteTodo, editTodo, deleteSelectedTodos } = useContext(TodoContext);
 
-    const [ selectedRow, setSelectedRow ] = useState(null);
-    const [ recordToDeleteId, setRecordToDeleteId ] = useState('');
-    const [ recordToEdit, setRecordToEdit ] = useState(null);
-    const [ selectedTodos, setSelectedTodos ] = useState([]);
-    const [ isOneRecord, setIsOneRecord ] = useState(true);
-
     const confirmationDialogRef = useRef(null);
-    const formDialogRef = useRef(null);
-
+    const [ recordToDeleteId, setRecordToDeleteId ] = useState('');
     const onDeleteTodo = (id) => () => {
         setRecordToDeleteId(id);
-        setIsOneRecord(true);
         confirmationDialogRef.current.openDialog();
     }
 
@@ -33,14 +25,16 @@ function TodoTable({ classes, ...props }) {
         deleteTodo(recordToDeleteId);
     }
 
+    const formDialogRef = useRef(null);
+    const [ recordToEdit, setRecordToEdit ] = useState(null);
     const onEditTodo = (todo) => () => {
         setRecordToEdit(todo);
         formDialogRef.current.handleOpen();
     }
 
+    const [ selectedTodos, setSelectedTodos ] = useState([]);
     const onDeleteSelectedTodos = (event, selected) => {
         setSelectedTodos(selected);
-        setIsOneRecord(false);
         confirmationDialogRef.current.openDialog();
     }
 
@@ -50,6 +44,7 @@ function TodoTable({ classes, ...props }) {
         }
 
         deleteSelectedTodos(selectedTodos);
+        setSelectedTodos([]);
     }
 
     const showTodoDetails = (id) => () => {
@@ -81,15 +76,49 @@ function TodoTable({ classes, ...props }) {
         );
     }
 
-    const onRowClick = (event, selectedRow) => setSelectedRow(selectedRow.tableData.id);
+    const tableProps = getTableProps(renderTableActions, onDeleteSelectedTodos);
 
-    const tableColumns = [
+    return (
+        <>
+            <MaterialTable
+                title="Todos"
+                data={todos}
+                {...tableProps}
+            />
+            <ConfirmationDialog
+                ref={confirmationDialogRef}
+                alertText={selectedTodos.length
+                    ? 'Are you sure you want to delete this records?'
+                    : 'Are you sure you want to delete this record?'
+                }
+                onConfirm={selectedTodos.length ? deleteSelectedTodoRecords : deleteTodoRecord }
+            />
+            <FormDialog
+                ref={formDialogRef}
+                action={{ editTodo }}
+                todo={recordToEdit}
+                buttonType={'Edit'}
+            />
+        </>
+    );
+}
+
+const getTableProps = (renderTableActions, onDeleteSelectedTodos) => {
+    const actions = [
+        {
+            tooltip: 'Remove selected todos',
+            icon: 'delete',
+            onClick: onDeleteSelectedTodos,
+        }
+    ]
+
+    const columns = [
         { title: 'Id', field: 'id', sorting: false, editable: 'never' },
         { title: 'Task Name', field: 'taskName' },
         { title: 'Task Description', field: 'taskDescription',
             cellStyle: {
-                width: '10px',
-                maxWidth: '10px',
+                width: '100px',
+                maxWidth: '100px',
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
             },
@@ -98,22 +127,7 @@ function TodoTable({ classes, ...props }) {
         { title: 'Actions', field: 'actions', sorting: false, editable: 'never', render: renderTableActions }
     ];
 
-    const tableOptions = {
-        sorting: true,
-        selection: true,
-        search: true,
-        rowStyle: rowData => ({ backgroundColor: (selectedRow === rowData.tableData.id) ? '#EEE' : '#FFF' }),
-    }
-
-    const tableActions = [
-        {
-            tooltip: 'Remove selected todos',
-            icon: 'delete',
-            onClick: onDeleteSelectedTodos,
-        }
-    ]
-
-    const tableComponents = {
+    const components = {
         Pagination: (props) => {
             if (props.count <= 5) {
                 return null;
@@ -125,48 +139,18 @@ function TodoTable({ classes, ...props }) {
         }
     }
 
-    // const prepareTodosForTable = todos.map((todo) => {
-    //     let shortDescription = '';
+    const options = {
+        sorting: true,
+        selection: true,
+        search: true,
+    }
 
-    //     if (todo.taskDescription.length >= 20) {
-    //         shortDescription = todo.taskDescription.substring(0, 20) + '...';
-    //     } else {
-    //         shortDescription = todo.taskDescription;
-    //     }
-
-    //     return {
-    //         ...todo,
-    //         shortDescription,
-    //     }
-    // });
-
-    return (
-        <>
-            <MaterialTable
-                title="Todos"
-                columns={tableColumns}
-                data={todos}
-                options={tableOptions}
-                onRowClick={onRowClick}
-                actions={tableActions}
-                components={tableComponents}
-            />
-            <ConfirmationDialog
-                ref={confirmationDialogRef}
-                alertText={isOneRecord
-                    ? 'Are you sure you want to delete this record?'
-                    : 'Are you sure you want to delete this records?'
-                }
-                onConfirm={isOneRecord ? deleteTodoRecord : deleteSelectedTodoRecords }
-            />
-            <FormDialog
-                ref={formDialogRef}
-                actions={{ editTodo }}
-                buttonType={'Edit'}
-                todo={recordToEdit}
-            />
-        </>
-    );
+    return {
+        actions,
+        columns,
+        components,
+        options,
+    }
 }
 
 export default withStyles(tableStyles)(TodoTable);

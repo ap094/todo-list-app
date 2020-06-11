@@ -1,22 +1,22 @@
 import React, { useContext, useRef } from 'react';
 import { Button, Icon } from '@material-ui/core';
 import withStyles from '@material-ui/core/styles/withStyles';
+import { todoListStyles } from '../styles';
 import { TodoContext } from '../context/TodosProvider';
-import { todoListStyles } from '../styles/styles';
-import FormDialog from './dialogs/FormDialog';
-import TodoTable from './TodoTable';
-import Home from './Home';
+import FormDialog from '../components/dialogs/FormDialog';
+import TodoTable from '../components/TodoTable';
+import BaseComponent from '../components/BaseComponent';
 
 function TodoList({ classes, history }) {
     const { addTodo } = useContext(TodoContext);
-    const formDialogRef = useRef(null);
 
+    const formDialogRef = useRef(null);
     const onAddButtonClick = () => {
         formDialogRef.current.handleOpen();
     }
 
     return (
-        <Home>
+        <BaseComponent>
             <Button
                 variant="contained"
                 color="primary"
@@ -26,13 +26,13 @@ function TodoList({ classes, history }) {
             >
                 Add todo
             </Button>
+            <TodoTable history={history} />
             <FormDialog
                 ref={formDialogRef}
-                actions={{ addTodo }}
+                action={{ addTodo }}
                 buttonType={'Add'}
             />
-            <TodoTable history={history} />
-        </Home>
+        </BaseComponent>
     );
 }
 

@@ -42,25 +42,17 @@ export default class ConfirmationDialog extends React.Component {
                 <DialogContent>
                     <h4>{this.props.alertText}</h4>
                 </DialogContent>
-                <DialogActions style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+                <DialogActions>
                     <Button
-                        style={{
-                            backgroundColor: 'rgb(0, 181, 0)',
-                            color: 'white',
-                            textTransform: 'none',
-                            fontSize: '12px',
-                        }}
+                        variant="contained"
+                        color="primary"
                         onClick={this.onYesButtonClick}
                     >
                         Yes
                     </Button>
                     <Button
-                        style={{
-                            backgroundColor: 'rgb(255, 77, 0)',
-                            color: 'white',
-                            textTransform: 'none',
-                            fontSize: '12px',
-                        }}
+                        variant="contained"
+                        color="secondary"
                         onClick={this.onNoButtonClick}
                     >
                         No

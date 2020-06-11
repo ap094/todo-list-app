@@ -1,6 +1,6 @@
 import React, { createContext, useState } from 'react';
 import { uuid } from 'uuidv4';
-import todosData from '../util/todosDummyData';
+import todosData from '../utils/todosDummyData';
 
 export const TodoContext = createContext();
 
@@ -8,15 +8,7 @@ const TodoContextProvider = ({ children }) => {
     const [ todos, setTodos ] = useState(todosData);
 
     const getTodo = (id) => {
-        let todoData = {};
-
-        todos.forEach((todo) => {
-            if (todo.id === id) {
-                todoData = { ...todo };
-            }
-        });
-
-        return todoData;
+        return todos.filter((todo) => todo.id === id)[0];
     }
 
     const addTodo = (todo) => {
@@ -52,17 +44,15 @@ const TodoContextProvider = ({ children }) => {
         setTodos(todosCopy);
     }
 
-    console.log('Todos', todos)
-
     return (
         <TodoContext.Provider
             value={{
                 todos,
+                getTodo,
                 addTodo,
                 editTodo,
                 deleteTodo,
                 deleteSelectedTodos,
-                getTodo
             }}
         >
             {children}

@@ -2,9 +2,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { AppBar, CssBaseline, Toolbar, Typography } from '@material-ui/core';
 import withStyles from '@material-ui/core/styles/withStyles';
-import { homeStyles } from '../styles/styles';
+import { baseComponentStyles } from '../styles';
 
-function Home({ classes, children  }) {
+function BaseComponent({ classes, children  }) {
     return (
         <div className={classes.root}>
             <CssBaseline />
@@ -26,4 +26,4 @@ function Home({ classes, children  }) {
     );
 }
 
-export default withStyles(homeStyles)(Home);
+export default withStyles(baseComponentStyles)(BaseComponent);

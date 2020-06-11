@@ -1,3 +1,4 @@
+import React from 'react';
 import {
     Button,
     Dialog,
@@ -6,8 +7,7 @@ import {
     DialogTitle,
     Grid,
     TextField,
- } from '@material-ui/core';
-import React from 'react';
+} from '@material-ui/core';
 
 export default class FormDialog extends React.Component {
     constructor(props) {
@@ -37,8 +37,24 @@ export default class FormDialog extends React.Component {
     }
 
     handleOpen = () => {
+        this.setState({ isDialogOpened: true });
+
+        if (
+            this.props.todo
+            && this.state.formFields.taskName === ''
+            && this.state.formFields.taskDescription === ''
+        ) {
+            this.setState({
+                formFields: {
+                    taskName: this.props.todo.taskName,
+                    taskDescription: this.props.todo.taskDescription,
+                },
+            })
+
+            return;
+        }
+
         this.setState({
-            isDialogOpened: true,
             formFields: {
                 taskName: '',
                 taskDescription: '',
@@ -64,12 +80,12 @@ export default class FormDialog extends React.Component {
         let errorMessages = {};
 
         if (formFields.taskName === '') {
-            errorMessages.taskName = 'Task name field is required';
+            errorMessages.taskName = 'Field is required';
             isValid = false;
         }
 
         if (formFields.taskDescription === '') {
-            errorMessages.taskDescription = 'Task description field is required';
+            errorMessages.taskDescription = 'Field is required';
             isValid = false;
         }
 
@@ -92,22 +108,31 @@ export default class FormDialog extends React.Component {
         this.setState({ isDialogOpened: false });
 
         if (this.props.buttonType === 'Add') {
-            this.props.actions.addTodo({
+            this.props.action.addTodo({
                 taskName: this.state.formFields.taskName,
                 taskDescription: this.state.formFields.taskDescription,
             });
         } else {
-            this.props.actions.editTodo({
+            this.props.action.editTodo({
                 ...this.props.todo,
                 taskName: this.state.formFields.taskName,
                 taskDescription: this.state.formFields.taskDescription,
             });
+
+            if (this.props.redirect) {
+                this.props.redirect.push('/');
+            }
         }
     };
 
     render() {
         return (
-            <Dialog open={this.state.isDialogOpened} onClose={this.handleClose}>
+            <Dialog
+                open={this.state.isDialogOpened}
+                onClose={this.handleClose}
+                disableBackdropClick={true}
+                disableEscapeKeyDown={true}
+            >
                 <DialogTitle id="form-dialog-title">
                     {this.props.buttonType === 'Edit' ? 'Edit Todo' : 'Create a new todo'}
                 </DialogTitle>
@@ -149,10 +174,10 @@ export default class FormDialog extends React.Component {
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={this.handleClose} color="primary">
+                    <Button onClick={this.handleClose} color="secondary" variant="contained">
                         Cancel
                     </Button>
-                    <Button onClick={this.handleSubmit} color="primary">
+                    <Button onClick={this.handleSubmit} color="primary" variant="contained">
                         {this.props.buttonType === 'Edit' ? 'Save' : 'Add'}
                     </Button>
                 </DialogActions>

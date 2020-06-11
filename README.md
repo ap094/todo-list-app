@@ -2,6 +2,8 @@
 
 <h3><ins>Setup:</ins></h3>
 
+Download or clone (`git clone https://github.com/ap094/todo-list-app.git`) repository to your PC.
+
 In the root directory, run the following commands:
 
 1. Installation of all necessary packages.<br>

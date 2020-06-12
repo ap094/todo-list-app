@@ -1,5 +1,5 @@
 import React, { useRef, useContext, useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, Redirect } from 'react-router-dom';
 import {
     Button,
     Card,
@@ -31,6 +31,9 @@ function TodoDetails({ classes, ...props }) {
                     ...data
                 });
             })
+            .catch((err) => {
+                console.log(err);
+            });
     }, [todoId]);
 
     const formDialogRef = useRef(null);

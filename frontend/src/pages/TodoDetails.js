@@ -1,5 +1,5 @@
-import React, { useRef, useContext } from 'react';
-import { useParams, Link } from "react-router-dom";
+import React, { useRef, useContext, useState, useEffect } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import {
     Button,
     Card,
@@ -12,15 +12,26 @@ import {
 } from '@material-ui/core';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { todoDetailStyles } from '../styles';
-import { TodoContext } from '../context/TodosProvider';
+import { TodoContext } from '../services/TodosProvider';
+import { getData } from '../services/todosAPI';
 import FormDialog from '../components/dialogs/FormDialog';
 import ConfirmationDialog from '../components/dialogs/ConfirmationDialog';
 import BaseComponent from '../components/BaseComponent';
 
 function TodoDetails({ classes, ...props }) {
-    const { getTodo, editTodo, deleteTodo } = useContext(TodoContext);
+    const { editTodo, deleteTodo } = useContext(TodoContext);
     const { todoId } = useParams();
-    const todoData = getTodo(todoId);
+    const [ todoData, setTodoData ] = useState({});
+
+    useEffect(() => {
+        getData(`/todo/${todoId}`)
+            .then((data) => {
+                setTodoData({
+                    id: data.todoId,
+                    ...data
+                });
+            })
+    }, [todoId]);
 
     const formDialogRef = useRef(null);
     const onEditTodo = () => {
@@ -42,6 +53,7 @@ function TodoDetails({ classes, ...props }) {
 
     return (
         <BaseComponent>
+            {Object.keys(todoData).length > 0 &&
             <>
                 <Card >
                     <CardHeader title='Todo details' />
@@ -54,7 +66,7 @@ function TodoDetails({ classes, ...props }) {
                                         id="taskId"
                                         fullWidth
                                         label="Id"
-                                        defaultValue={todoData.id}
+                                        defaultValue={todoData.todoId}
                                         InputProps={{
                                             readOnly: true,
                                         }}
@@ -134,7 +146,7 @@ function TodoDetails({ classes, ...props }) {
                     action={{ editTodo }}
                     todo={todoData}
                     buttonType={'Edit'}
-                    redirect={props.history}
+                    reload={true}
                 />
                 <ConfirmationDialog
                     ref={confirmationDialogRef}
@@ -143,6 +155,7 @@ function TodoDetails({ classes, ...props }) {
                     redirect={props.history}
                 />
             </>
+            }
         </BaseComponent>
     );
 }

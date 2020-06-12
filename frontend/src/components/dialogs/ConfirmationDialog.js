@@ -43,18 +43,10 @@ export default class ConfirmationDialog extends React.Component {
                     <h4>{this.props.alertText}</h4>
                 </DialogContent>
                 <DialogActions>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={this.onYesButtonClick}
-                    >
+                    <Button variant="contained" color="primary" onClick={this.onYesButtonClick}>
                         Yes
                     </Button>
-                    <Button
-                        variant="contained"
-                        color="secondary"
-                        onClick={this.onNoButtonClick}
-                    >
+                    <Button variant="contained" color="secondary" onClick={this.onNoButtonClick}>
                         No
                     </Button>
                 </DialogActions>

@@ -27,13 +27,19 @@ const todoListStyles = () => ({
     },
 });
 
-const tableStyles = () => ({
+const tableStyles = (theme) => ({
     button: {
         border: 'none',
         background: 'none',
         cursor: 'pointer',
         marginLeft: '10px'
-    }
+    },
+	uiProgress: {
+		position: 'fixed',
+		zIndex: '1000',
+		left: '50%',
+		top: '50%'
+	},
 });
 
 const todoDetailStyles = () => ({

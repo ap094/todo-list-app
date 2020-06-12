@@ -2,10 +2,10 @@ import React, { useContext, useRef } from 'react';
 import { Button, Icon } from '@material-ui/core';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { todoListStyles } from '../styles';
-import { TodoContext } from '../context/TodosProvider';
+import { TodoContext } from '../services/TodosProvider';
+import BaseComponent from '../components/BaseComponent';
 import FormDialog from '../components/dialogs/FormDialog';
 import TodoTable from '../components/TodoTable';
-import BaseComponent from '../components/BaseComponent';
 
 function TodoList({ classes, history }) {
     const { addTodo } = useContext(TodoContext);

@@ -20,8 +20,12 @@ exports.getTodos = (request, response) => {
             return response.json(todos);
         })
         .catch((err) => {
-            console.error('Error on get todos');
-            return response.status(500).json({ error: err.code });
+            return response.status(500).json({
+                error: {
+                    message: 'Error on get todos',
+                    code: err.code
+                }
+            });
         });
 };
 
@@ -40,8 +44,12 @@ exports.getOneTodo = (request, response) => {
             });
         })
         .catch((err) => {
-            console.log('Error on get todo');
-            return response.status(500).json({ error: err.code });
+            return response.status(500).json({
+                error: {
+                    message: 'Error on get one todo',
+                    code: err.code
+                }
+            });
         });
 }
 
@@ -57,7 +65,7 @@ exports.postTodo = (request, response) => {
     const newTodoItem = {
         taskName: request.body.taskName,
         taskDescription: request.body.taskDescription,
-        createdAt: new Date().toLocaleString()
+        createdAt: new Date().toLocaleString('hr-HR')
     }
 
     db
@@ -70,10 +78,35 @@ exports.postTodo = (request, response) => {
             });
         })
         .catch((err) => {
-            console.error('Error on post todo');
-            return response.status(500).json({ error: err.code });
+            return response.status(500).json({
+                error: {
+                    message: 'Error on post todo',
+                    code: err.code
+                }
+            });
         });
 };
+
+exports.editTodo = (request, response) => {
+    if (request.body.todoId || request.body.createdAt) {
+        return response.status(403).json({ message: 'Not allowed to edit' });
+    }
+
+    db
+        .doc(`/todos/${request.params.todoId}`)
+        .update(request.body)
+        .then(()=> {
+            return response.json({ message: 'Updated successfully!' });
+        })
+        .catch((err) => {
+            return response.status(500).json({
+                error: {
+                    message: 'Error on edit todo',
+                    code: err.code
+                }
+            });
+        });
+}
 
 exports.deleteTodo = (request, response) => {
     const document = db.doc(`/todos/${request.params.todoId}`);
@@ -88,28 +121,14 @@ exports.deleteTodo = (request, response) => {
             return document.delete();
         })
         .then(() => {
-            response.json({ message: 'Delete successfull' });
+            response.json({ message: 'Delete successfull!' });
         })
         .catch((err) => {
-            console.error('Error on delete todo');
-            return response.status(500).json({ error: err.code });
-        });
-}
-
-exports.editTodo = (request, response) => {
-    if (request.body.todoId || request.body.createdAt) {
-        return response.status(403).json({ message: 'Not allowed to edit' });
-    }
-
-    const document = db.collection('todos').doc(`${request.params.todoId}`);
-
-    document
-        .update(request.body)
-        .then(()=> {
-            response.json({ message: 'Updated successfully' });
-        })
-        .catch((err) => {
-            console.error('Error on edit todo');
-            return response.status(500).json({ error: err.code });
+            return response.status(500).json({
+                error: {
+                    message: 'Error on delete todo',
+                    code: err.code
+                }
+            });
         });
 }

@@ -1,19 +1,19 @@
 import React, { useState, useContext, useRef } from 'react';
 import MaterialTable from 'material-table';
-import { TablePagination } from '@material-ui/core';
+import { TablePagination, CircularProgress } from '@material-ui/core';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { tableStyles } from '../styles';
-import { TodoContext } from '../context/TodosProvider';
+import { TodoContext } from '../services/TodosProvider';
 import ConfirmationDialog from './dialogs/ConfirmationDialog';
 import FormDialog from './dialogs/FormDialog';
 
 function TodoTable({ classes, ...props }) {
-    const { todos, deleteTodo, editTodo, deleteSelectedTodos } = useContext(TodoContext);
+    const { isLoading, todos, deleteTodo, editTodo, deleteSelectedTodos } = useContext(TodoContext);
 
     const confirmationDialogRef = useRef(null);
     const [ recordToDeleteId, setRecordToDeleteId ] = useState('');
-    const onDeleteTodo = (id) => () => {
-        setRecordToDeleteId(id);
+    const onDeleteTodo = (todoId) => () => {
+        setRecordToDeleteId(todoId);
         confirmationDialogRef.current.openDialog();
     }
 
@@ -47,8 +47,8 @@ function TodoTable({ classes, ...props }) {
         setSelectedTodos([]);
     }
 
-    const showTodoDetails = (id) => () => {
-        props.history.push(`/detail/${id}`);
+    const showTodoDetails = (todoId) => () => {
+        props.history.push(`/detail/${todoId}`);
     };
 
     const renderTableActions = (rowData) => {
@@ -77,6 +77,19 @@ function TodoTable({ classes, ...props }) {
     }
 
     const tableProps = getTableProps(renderTableActions, onDeleteSelectedTodos);
+
+    if (isLoading === true) {
+        return (
+            <>
+                <MaterialTable
+                    title="Todos"
+                    data={[]}
+                    {...tableProps}
+                />
+                {isLoading && <CircularProgress size={50} thickness={2.5} className={classes.uiProgress} />}
+            </>
+        );
+    }
 
     return (
         <>
@@ -109,7 +122,7 @@ const getTableProps = (renderTableActions, onDeleteSelectedTodos) => {
             tooltip: 'Remove selected todos',
             icon: 'delete',
             onClick: onDeleteSelectedTodos,
-        }
+        },
     ]
 
     const columns = [

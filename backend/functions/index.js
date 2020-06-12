@@ -1,5 +1,6 @@
 const functions = require('firebase-functions');
 const app = require('express')();
+const cors = require('cors');
 
 const {
     getTodos,
@@ -8,6 +9,9 @@ const {
     editTodo,
     deleteTodo,
 } = require('./api/todos')
+
+// Access-Control-Allow-Origin: *
+app.use(cors());
 
 app.get('/todos', getTodos);
 app.get('/todo/:todoId', getOneTodo);

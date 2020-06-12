@@ -1,5 +1,5 @@
 import React, { useRef, useContext, useState, useEffect } from 'react';
-import { useParams, Link, Redirect } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import {
     Button,
     Card,

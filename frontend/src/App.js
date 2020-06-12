@@ -1,10 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import TodoContextProvider from './context/TodosProvider';
+import TodoContextProvider from './services/TodosProvider';
 import TodoList from './pages/TodoList';
 import TodoDetails from './pages/TodoDetails';
 
-function App() {
+export default function App() {
     return (
         <TodoContextProvider>
             <Router>
@@ -16,5 +16,3 @@ function App() {
         </TodoContextProvider>
     );
 }
-
-export default App;

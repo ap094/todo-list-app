@@ -11,7 +11,7 @@ In the backend/functions directory, run the following commands:
 1. Installation of all necessary packages.<br>
     ### `npm ci`
 
-2. Run firebase server.
+2. Runs firebase server.
     ### `npm run serve`
 
 ## Frontend
@@ -21,6 +21,6 @@ In the frontend directory, run the following commands:
 1. Installation of all necessary packages.<br>
     ### `npm ci`
 
-2. Run the app in the development mode.
+2. Runs the app in the development mode.
     ### `npm start`
     Open [http://localhost:3000](http://localhost:3000) to view it in the browser.

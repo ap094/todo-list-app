@@ -32,24 +32,20 @@ export default class FormDialog extends React.Component {
                     taskName: this.props.todo.taskName,
                     taskDescription: this.props.todo.taskDescription,
                 },
-            })
+            });
         }
     }
 
     handleOpen = () => {
         this.setState({ isDialogOpened: true });
 
-        if (
-            this.props.todo
-            && this.state.formFields.taskName === ''
-            && this.state.formFields.taskDescription === ''
-        ) {
+        if (this.props.todo) {
             this.setState({
                 formFields: {
                     taskName: this.props.todo.taskName,
                     taskDescription: this.props.todo.taskDescription,
                 },
-            })
+            });
 
             return;
         }
@@ -59,7 +55,7 @@ export default class FormDialog extends React.Component {
                 taskName: '',
                 taskDescription: '',
             },
-        })
+        });
     }
 
     handleClose = () => {
@@ -90,9 +86,7 @@ export default class FormDialog extends React.Component {
         }
 
         this.setState({
-            errors: {
-                ...errorMessages
-            }
+            errors: { ...errorMessages }
         });
 
         return isValid;
@@ -119,8 +113,8 @@ export default class FormDialog extends React.Component {
                 taskDescription: this.state.formFields.taskDescription,
             });
 
-            if (this.props.redirect) {
-                this.props.redirect.push('/');
+            if (this.props.reload) {
+                setTimeout(() => window.location.reload(), 300);
             }
         }
     };

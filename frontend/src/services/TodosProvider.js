@@ -1,29 +1,43 @@
-import React, { createContext, useState } from 'react';
-import { uuid } from 'uuidv4';
-import todosData from '../utils/todosDummyData';
+import React, { createContext, useState, useEffect } from 'react';
+import { getData, postData, deleteData } from './todosAPI';
 
 export const TodoContext = createContext();
 
 const TodoContextProvider = ({ children }) => {
-    const [ todos, setTodos ] = useState(todosData);
+    const [ todos, setTodos ] = useState([]);
+    const [ isLoading, setIsLoading ] = useState(false);
 
-    const getTodo = (id) => {
-        return todos.filter((todo) => todo.id === id)[0];
-    }
+    useEffect(() => {
+        setIsLoading(true);
+
+        getData('/todos')
+            .then((data) => {
+                setTodos(data);
+                setIsLoading(false);
+            });
+    }, []);
 
     const addTodo = (todo) => {
-        setTodos([
-            ...todos,
-            { ...todo, id: uuid(), createdAt: new Date().toLocaleString() }
-        ]);
+        postData('/todo', 'post', todo)
+            .then(({ data }) => {
+                setTodos([
+                    ...todos,
+                    { ...data }
+                ]);
+            });
     };
 
     const editTodo = (todoRecord) => {
+        const updatedTodo = {
+            taskName: todoRecord.taskName,
+            taskDescription: todoRecord.taskDescription
+        }
+
+        postData(`/todo/${todoRecord.id}`, 'put', updatedTodo);
+
         setTodos(todos.map((todo) => {
             if (todo.id === todoRecord.id) {
-                return {
-                    ...todoRecord,
-                }
+                return { ...todoRecord };
             }
 
             return todo;
@@ -31,6 +45,7 @@ const TodoContextProvider = ({ children }) => {
     }
 
     const deleteTodo = (id) => {
+        deleteData(`/todo/${id}`);
         setTodos(todos.filter(todo => todo.id !== id));
     }
 
@@ -38,6 +53,7 @@ const TodoContextProvider = ({ children }) => {
         let todosCopy = [...todos];
 
         selectedTodos.forEach(st => {
+            deleteData(`/todo/${st.id}`);
             todosCopy = todosCopy.filter(tc => tc.id !== st.id);
         });
 
@@ -47,8 +63,8 @@ const TodoContextProvider = ({ children }) => {
     return (
         <TodoContext.Provider
             value={{
+                isLoading,
                 todos,
-                getTodo,
                 addTodo,
                 editTodo,
                 deleteTodo,

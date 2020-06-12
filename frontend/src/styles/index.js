@@ -61,9 +61,21 @@ const todoDetailStyles = () => ({
     }
 });
 
+const pageNotFoundStyles = () => ({
+    pageNotFound: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        fontSize: '20px',
+        marginTop: '100px',
+    }
+});
+
 export {
     baseComponentStyles,
     todoListStyles,
     tableStyles,
     todoDetailStyles,
+    pageNotFoundStyles
 }

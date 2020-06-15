@@ -37,7 +37,13 @@ export default class FormDialog extends React.Component {
     }
 
     handleOpen = () => {
-        this.setState({ isDialogOpened: true });
+        this.setState({
+            isDialogOpened: true,
+            errors: {
+                taskName: '',
+                taskDescription: '',
+            },
+        });
 
         if (this.props.todo) {
             this.setState({

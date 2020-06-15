@@ -4,7 +4,7 @@ import { AppBar, CssBaseline, Toolbar, Typography } from '@material-ui/core';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { baseComponentStyles } from '../styles';
 
-function BaseComponent({ classes, children  }) {
+function BaseComponent({ classes, children }) {
     return (
         <div className={classes.root}>
             <CssBaseline />
